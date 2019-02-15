@@ -1,0 +1,61 @@
+plugins {
+  id "java"
+
+  // for running the Demo app
+  id "application"
+
+  // https://plugins.gradle.org/plugin/com.jfrog.artifactory
+  id "com.jfrog.artifactory" version "4.9.0"
+
+  // https://plugins.gradle.org/plugin/com.github.sherter.google-java-format
+  id "com.github.sherter.google-java-format" version "0.8"
+
+  // https://plugins.gradle.org/plugin/net.ltgt.errorprone
+  id 'net.ltgt.errorprone' version "0.6.1"
+}
+
+repositories {
+  mavenCentral()
+}
+
+ext {
+  // https://mvnrepository.com/artifact/com.google.errorprone/error_prone_core
+  errorProneCoreVersion = "2.3.2"
+
+  // https://mvnrepository.com/artifact/com.google.errorprone/javac
+  // required for Java 8 support
+  errorProneJavacVersion = "9+181-r4173-1"
+
+  // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+  junitVersion = "5.3.2"
+
+  // https://search.maven.org/artifact/com.google.guava/guava
+  guavaVersion = "27.0.1-jre"
+}
+
+dependencies {
+  errorprone "com.google.errorprone:error_prone_core:${errorProneCoreVersion}"
+  errorproneJavac "com.google.errorprone:javac:${errorProneJavacVersion}"
+
+  testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+  testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
+  compile "com.google.guava:guava:${guavaVersion}"
+}
+
+tasks.withType(JavaCompile) {
+  // In Gradle 4.9+, prefer using tasks.withType(JavaCompile).configureEach {
+  it.dependsOn "googleJavaFormat"
+  options.encoding = 'UTF-8'
+  options.errorprone {
+    disableWarningsInGeneratedCode = true
+    excludedPaths = ".*/build/generated/.*"
+  }
+}
+
+mainClassName = 'io.waveshaper.Demo'
+
+run {
+  // Enable human friendly logging
+  systemProperty "LOCAL", "local"
+}
