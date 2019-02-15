@@ -1,0 +1,16 @@
+.classpath
+.idea
+*.iml
+*.jar
+.project
+/.gradle/
+/.gradle.properties
+/.settings/
+/build/
+/gradle.properties
+/bin/
+/tmp/
+/test-out/
+/workbench.xmi
+.DS_Store
+.vscode
