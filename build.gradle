@@ -47,9 +47,8 @@ dependencies {
   implementation "com.google.guava:guava:${guavaVersion}"
 }
 
-tasks.withType(JavaCompile) {
-  // In Gradle 4.9+, prefer using tasks.withType(JavaCompile).configureEach {
-  it.dependsOn "googleJavaFormat"
+tasks.withType(JavaCompile).configureEach { javaCompile ->
+  javaCompile.dependsOn "googleJavaFormat"
   options.encoding = 'UTF-8'
   options.errorprone {
     disableWarningsInGeneratedCode = true
