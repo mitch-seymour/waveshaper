@@ -1,5 +1,5 @@
 plugins {
-  id "java"
+  id "java-library"
 
   // for running the Demo app
   id "application"
@@ -44,7 +44,7 @@ dependencies {
   testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
   testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
-  compile "com.google.guava:guava:${guavaVersion}"
+  implementation "com.google.guava:guava:${guavaVersion}"
 }
 
 tasks.withType(JavaCompile) {
