@@ -48,10 +48,10 @@ public class Demo {
     // ▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁
     Oscillator osc =
         new Oscillator.Builder()
-            .waveform(ReverseSawWave::new)
-            .cycles(2)
-            .sampleRate(8)
-            .sampleDuration(Duration.ofSeconds(5))
+            .waveform(SawWave::new)
+            .cycles(3)
+            .sampleRate(20)
+            .sampleDuration(Duration.ofSeconds(2))
             .range(1, 500_000)
             .build();
 
@@ -81,6 +81,6 @@ public class Demo {
     }
 
     executor.shutdown();
-    System.out.println(permitsByThread);
+    // System.out.println(permitsByThread);
   }
 }
