@@ -7,7 +7,7 @@ import java.time.Instant;
 
 public class WaveformRateLimiter implements Syncable {
   private final Oscillator osc;
-  private final RateLimiter limiter;
+  private RateLimiter limiter;
   private int totalAcquired = 0;
   private Instant start = Instant.now();
 
@@ -34,8 +34,20 @@ public class WaveformRateLimiter implements Syncable {
       double currentRate = limiter.getRate();
       System.out.printf(
           "previous rate: %.1f, eps: %.1f, diff: %.1f\n", currentRate, eps, currentRate - eps);
-      // set the new rate and reset the properties for calculating eps
-      limiter.setRate(value);
+      /*!
+       * Update the rate limiter. Note: we initially tried using
+       * limiter.setRate(value), but according to the guava Javadocs:
+       *
+       * "each request repays (by waiting, if necessary) the cost of the previous request"
+       *
+       * Since the new rate is not observed immediately, recreating the rate
+       * limiter leads to more predictable and accurate rendering of the
+       * underlying waveform. The following issue is of particular interest and
+       * could potentially allow us to leverage limiter.setRate in the future:
+       *
+       * @link https://github.com/google/guava/issues/3220
+       */
+      limiter = RateLimiter.create(value);
       totalAcquired = 0;
       start = Instant.now();
     }
