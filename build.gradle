@@ -4,6 +4,12 @@ plugins {
   // for running the Demo app
   id "application"
 
+  // for publishing the artifact to maven central
+  id "maven-publish"
+
+  // for signing the artifact when publishing to maven central
+  id "signing"
+
   // https://plugins.gradle.org/plugin/com.jfrog.artifactory
   id "com.jfrog.artifactory" version "4.9.0"
 
@@ -20,7 +26,6 @@ repositories {
 
 sourceCompatibility = '11'
 targetCompatibility = '11'
-version = '0.1.0-SNAPSHOT'
 
 ext {
   // https://mvnrepository.com/artifact/com.google.errorprone/error_prone_core
@@ -61,4 +66,81 @@ mainClassName = 'io.waveshaper.Demo'
 run {
   // Enable human friendly logging
   systemProperty "LOCAL", "local"
+}
+
+
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allJava
+  archiveClassifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+  from javadoc
+  archiveClassifier = 'javadoc'
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = 'waveshaper'
+      groupId 'io.waveshaper'
+      version '0.1.0'
+      from components.java
+      artifact sourcesJar
+      artifact javadocJar
+      /*
+      versionMapping {
+        usage('java-api') {
+          fromResolutionOf('runtimeClasspath')
+        }
+        usage('java-runtime') {
+          fromResolutionResult()
+        }
+      }
+      */
+      pom {
+        name = 'Waveshaper'
+        description = 'A library for load testing with synthetic waveforms'
+        url = 'https://github.com/mitch-seymour/waveshaper'
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            id = 'mitch-seymour'
+            name = 'Mitch Seymour'
+            email = 'mitchseymour@gmail.com'
+          }
+        }
+        scm {
+            connection = 'scm:git:git://github.com/mitch-seymour/waveshaper.git'
+            developerConnection = 'scm:git:ssh://git@github.com:mitch-seymour/waveshaper.git'
+            url = 'https://github.com/mitch-seymour/waveshaper'
+        }
+      }
+    }
+  }
+  repositories {
+    maven {
+      url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+      credentials {
+          username sonatypeUsername
+          password sonatypePassword
+      }
+    }
+  }
+}
+
+signing {
+  sign publishing.publications.mavenJava
+}
+
+
+javadoc {
+  if(JavaVersion.current().isJava9Compatible()) {
+    options.addBooleanOption('html5', true)
+  }
 }
