@@ -1,3 +1,10 @@
+buildscript {
+  if (!project.hasProperty("sonatypeUsername") || !project.hasProperty("sonatypePassword")) {
+    ext.sonatypeUsername = System.getenv("SONATYPE_USERNAME")
+    ext.sonatypePassword = System.getenv("SONATYPE_PASSWORD")
+  }
+}
+
 plugins {
   id "java-library"
 
@@ -144,3 +151,8 @@ javadoc {
     options.addBooleanOption('html5', true)
   }
 }
+
+if (!sonatypeUsername || !sonatypePassword) {
+  signArchives.enabled = false
+}
+
