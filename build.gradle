@@ -95,16 +95,6 @@ publishing {
       from components.java
       artifact sourcesJar
       artifact javadocJar
-      /*
-      versionMapping {
-        usage('java-api') {
-          fromResolutionOf('runtimeClasspath')
-        }
-        usage('java-runtime') {
-          fromResolutionResult()
-        }
-      }
-      */
       pom {
         name = 'Waveshaper'
         description = 'A library for load testing with synthetic waveforms'
@@ -150,9 +140,5 @@ javadoc {
   if(JavaVersion.current().isJava9Compatible()) {
     options.addBooleanOption('html5', true)
   }
-}
-
-if (!sonatypeUsername || !sonatypePassword) {
-  signArchives.enabled = false
 }
 
