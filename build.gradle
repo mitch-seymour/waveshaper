@@ -31,8 +31,8 @@ repositories {
   mavenCentral()
 }
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 ext {
   // https://mvnrepository.com/artifact/com.google.errorprone/error_prone_core
