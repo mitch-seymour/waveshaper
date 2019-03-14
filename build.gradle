@@ -91,7 +91,7 @@ publishing {
     mavenJava(MavenPublication) {
       artifactId = 'waveshaper'
       groupId 'io.waveshaper'
-      version '0.1.0'
+      version '0.1.1-SNAPSHOT'
       from components.java
       artifact sourcesJar
       artifact javadocJar
