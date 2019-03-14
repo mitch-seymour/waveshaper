@@ -1,5 +1,4 @@
-This project is __pre-alpha__. Do not use in production yet.
-
+[![Maven Central](https://img.shields.io/maven-central/v/io.waveshaper/waveshaper.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.waveshaper%22%20AND%20a:%22waveshaper%22)
 # waveshaper
 Inspired by [ChucK][chuck], and also by the shape of traffic patterns I recently encountered in one of my projects (which looked like reverse saw waves), __waveshaper__ uses musical (or otherwise synthetic) waveforms for load testing applications. This is made possible through the implementation of a signal oscillator that generates a number of waveforms (see below), which is then chained to a [guava RateLimiter][guava_rl]. This threadsafe rate limiter can then be utilized by your data generation / load testing tools, as seen in the demo below.
 This project is __pre-alpha__. Do not use in production yet.
@@ -23,6 +22,24 @@ The following waveforms are currently supported
 [reverse_saw]: src/main/java/io/waveshaper/waveforms/ReverseSawWave.java
 [square]: src/main/java/io/waveshaper/waveforms/SquareWave.java
 [triangle]: src/main/java/io/waveshaper/waveforms/TriangleWave.java
+
+Download
+---------
+Gradle:
+```groovy
+implementation 'io.waveshaper:waveshaper:0.1.0'
+```
+
+Maven:
+```xml
+<dependency>
+  <groupId>io.waveshaper</groupId>
+  <artifactId>waveshaper</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
+[Jar downloads](https://search.maven.org/artifact/io.waveshaper/waveshaper/0.1.0/jar) are available from Maven Central.
 
 ## Basic usage
 ```java
