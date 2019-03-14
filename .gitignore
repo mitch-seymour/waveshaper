@@ -1,7 +1,6 @@
 .classpath
 .idea
 *.iml
-*.jar
 .project
 /.gradle/
 /.gradle.properties
