@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.com/mitch-seymour/waveshaper.svg?branch=master)](https://travis-ci.com/mitch-seymour/waveshaper) &nbsp;[![Maven Central](https://img.shields.io/maven-central/v/io.waveshaper/waveshaper.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22io.waveshaper%22%20AND%20a:%22waveshaper%22)
 # waveshaper
 Inspired by [ChucK][chuck], and also by the shape of traffic patterns I recently encountered in one of my projects (which looked like reverse saw waves), __waveshaper__ uses musical (or otherwise synthetic) waveforms for load testing applications. This is made possible through the implementation of a signal oscillator that generates a number of waveforms (see below), which is then chained to a [guava RateLimiter][guava_rl]. This threadsafe rate limiter can then be utilized by your data generation / load testing tools, as seen in the demo below.
-This project is __pre-alpha__. Do not use in production yet.
 
 [chuck]: http://chuck.cs.princeton.edu/
 [guava_rl]: https://github.com/google/guava/blob/master/guava/src/com/google/common/util/concurrent/RateLimiter.java
