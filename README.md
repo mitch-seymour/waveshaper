@@ -46,7 +46,7 @@ Maven:
 // ▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁
 Oscillator osc =
     new Oscillator.Builder()
-        .waveform(ReverseSawWave::new)
+        .waveform(SawWave::new)
         .cycles(3)
         .sampleRate(8)
         .sampleDuration(Duration.ofSeconds(5))
