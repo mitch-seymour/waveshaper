@@ -26,7 +26,7 @@ Download
 ---------
 Gradle:
 ```groovy
-implementation 'io.waveshaper:waveshaper:0.1.0'
+implementation 'io.waveshaper:waveshaper:0.1.1'
 ```
 
 Maven:
@@ -34,7 +34,7 @@ Maven:
 <dependency>
   <groupId>io.waveshaper</groupId>
   <artifactId>waveshaper</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
