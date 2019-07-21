@@ -8,7 +8,9 @@ package io.waveshaper.waveforms;
 public class SineWave implements Waveform {
   @Override
   public Amplitude getAmplitude(double step) {
-    double value = Math.sin(Math.toRadians(step * 360));
+    // calculate the angle with a 90 degree phase shift
+    double angle = (step * 360.0) + 90.0;
+    double value = Math.sin(Math.toRadians(angle % 360));
     return new Amplitude(value);
   }
 }
