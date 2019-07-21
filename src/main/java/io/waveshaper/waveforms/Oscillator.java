@@ -26,6 +26,8 @@ public class Oscillator implements Iterator<Double> {
   // used by the iterator
   private int currentPosition = 0;
 
+  private int horizontalShift;
+
   // synchronized output devices for the oscillator signal
   private final HashSet<Syncable> syncables = new HashSet<>();
 
@@ -40,6 +42,7 @@ public class Oscillator implements Iterator<Double> {
     this.rangeMax = builder.rangeMax;
     this.sampleRate = builder.sampleRate;
     this.sampleDuration = builder.sampleDuration;
+    this.horizontalShift = builder.horizontalShift + (int) Math.ceil((double) sampleRate / 2);
   }
 
   public static class Builder {
@@ -49,6 +52,7 @@ public class Oscillator implements Iterator<Double> {
     private double rangeMax = 1;
     private int sampleRate = 100;
     private Duration sampleDuration = Duration.ofMillis(0);
+    private int horizontalShift = 0;
 
     public Builder waveform(Supplier<Waveform> waveformSupplier) {
       this.waveform = waveformSupplier.get();
@@ -57,6 +61,11 @@ public class Oscillator implements Iterator<Double> {
 
     public Builder cycles(int cycles) {
       this.cycles = cycles;
+      return this;
+    }
+
+    public Builder horizontalShift(int horizontalShift) {
+      this.horizontalShift = horizontalShift;
       return this;
     }
 
@@ -88,10 +97,14 @@ public class Oscillator implements Iterator<Double> {
 
   @Override
   public Double next() {
+    if (!hasNext()) {
+      throw new RuntimeException("Tried to sample a fully sampled waveform");
+    }
+    double adjustedPosition = currentPosition + horizontalShift;
+    double step = (double) (adjustedPosition % sampleRate) / sampleRate;
     synchronized (this) {
       currentPosition++;
     }
-    double step = (double) (currentPosition % sampleRate) / sampleRate;
     return waveform.getAmplitude(step).getValue(rangeMin, rangeMax);
   }
 
