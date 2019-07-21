@@ -68,6 +68,10 @@ tasks.withType(JavaCompile).configureEach { javaCompile ->
   }
 }
 
+test {
+  useJUnitPlatform()
+}
+
 mainClassName = 'io.waveshaper.Demo'
 
 run {
