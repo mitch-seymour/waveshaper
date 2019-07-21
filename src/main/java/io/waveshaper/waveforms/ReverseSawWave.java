@@ -8,6 +8,7 @@ package io.waveshaper.waveforms;
 public class ReverseSawWave extends SawWave {
   @Override
   public Amplitude getAmplitude(double step) {
-    return super.getAmplitude(1 - step);
+    double value = super.getAmplitude(step).getValue() * -1;
+    return new Amplitude(value);
   }
 }
