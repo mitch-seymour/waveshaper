@@ -44,15 +44,22 @@ public class Demo {
   }
 
   public static void main(String[] args) {
+    int sampleRate = 20;
+    int cycles = 3;
+    int min = 1;
+    int max = 500_000;
+    // Generate and print the ASCII chart
+    Sparkline sparkline = new Sparkline(sampleRate, min, max);
+
     // create an oscillator that generates the following waveform:
     // ▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁
     Oscillator osc =
         new Oscillator.Builder()
-            .waveform(SawWave::new)
-            .cycles(3)
-            .sampleRate(20)
-            .sampleDuration(Duration.ofSeconds(2))
-            .range(1, 500_000)
+            .waveform(SawWave::new) // ReverseSawWave, SineWave, SquareWave, TriangleWave
+            .cycles(cycles)
+            .sampleRate(sampleRate)
+            .sampleDuration(Duration.ofMillis(250))
+            .range(min, max)
             .build();
 
     // synchronize the oscillator signal with a rate limiter (signal chaining)
@@ -75,8 +82,17 @@ public class Demo {
             permitsByThread.incrementAndGet(Thread.currentThread().getName());
             // do work here. e.g. if you are producing a message to kafka, this is
             // where you'd do it
-            String message = seq.get().next();
+            /*String message = */seq.get().next();
+
             // produce message somewhere
+            // ...
+
+            // print
+            rateLimiter.registerCallback(rl -> {
+                sparkline.addDataPoint(rl.getEps());
+                sparkline.print();
+                System.out.printf("eps: %.1f\n", rl.getEps());
+            });
           });
     }
 
