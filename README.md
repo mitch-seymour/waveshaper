@@ -26,7 +26,7 @@ Download
 ---------
 Gradle:
 ```groovy
-implementation 'io.waveshaper:waveshaper:0.1.2'
+implementation 'io.waveshaper:waveshaper:0.1.3'
 ```
 
 Maven:
