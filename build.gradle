@@ -1,10 +1,3 @@
-buildscript {
-  if (!project.hasProperty("sonatypeUsername") || !project.hasProperty("sonatypePassword")) {
-    ext.sonatypeUsername = System.getenv("SONATYPE_USERNAME")
-    ext.sonatypePassword = System.getenv("SONATYPE_PASSWORD")
-  }
-}
-
 plugins {
   id "java-library"
 
@@ -123,7 +116,7 @@ publishing {
     mavenJava(MavenPublication) {
       artifactId = 'waveshaper'
       groupId 'io.waveshaper'
-      version '0.1.2'
+      version '0.1.3'
       from components.java
       artifact sourcesJar
       artifact javadocJar
@@ -156,8 +149,8 @@ publishing {
     maven {
       url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
       credentials {
-          username sonatypeUsername
-          password sonatypePassword
+        username = findProperty("ossrhToken") as String
+        password = findProperty("ossrhTokenPassword") as String
       }
     }
   }
