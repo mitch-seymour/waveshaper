@@ -41,7 +41,7 @@ Maven:
 [Jar downloads](https://search.maven.org/artifact/io.waveshaper/waveshaper/0.1.0/jar) are available from Maven Central.
 
 ## Demo
-The repo includes a demo. You can run it using the following commands:
+The repo includes [a demo](https://github.com/mitch-seymour/waveshaper/blob/29d4da0c6ebb7c245fd602db358a8300c8128d6f/src/examples/java/io/waveshaper/Demo.java#L47). You can run it using the following commands:
 
 ```sh
 export WAVE="Sine" # Saw, Square, ReverseSaw, Triangle
