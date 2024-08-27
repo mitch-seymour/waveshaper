@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.function.Supplier;
 
 public class Demo {
   // build an infinite sequence for generating dummy data
@@ -45,17 +46,41 @@ public class Demo {
 
   public static void main(String[] args) {
     int sampleRate = 20;
-    int cycles = 3;
+    int cycles = 15;
     int min = 1;
     int max = 500_000;
     // Generate and print the ASCII chart
     Sparkline sparkline = new Sparkline(sampleRate, min, max);
 
+    // Declare wave as a Supplier of the appropriate type
+    Supplier<Waveform> wave = SawWave::new;
+
+    // Get the environment variable
+    String w = System.getenv("WAVE");
+
+    switch (w.toLowerCase()) {
+        case "triangle":
+            wave = TriangleWave::new;
+            break;
+        case "saw":
+            wave = SawWave::new;
+            break;
+        case "reverse":
+            wave = ReverseSawWave::new;
+            break;
+        case "square":
+            wave = SquareWave::new;
+            break;
+        default: // Default case to SineWave
+            wave = SineWave::new;
+            break;
+    }
+
     // create an oscillator that generates the following waveform:
     // ▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁▂▃▄▄▅▆▇█▁▁
     Oscillator osc =
         new Oscillator.Builder()
-            .waveform(SawWave::new) // ReverseSawWave, SineWave, SquareWave, TriangleWave
+            .waveform(wave) // ReverseSawWave, SineWave, SquareWave, TriangleWave
             .cycles(cycles)
             .sampleRate(sampleRate)
             .sampleDuration(Duration.ofMillis(250))
@@ -91,6 +116,7 @@ public class Demo {
             rateLimiter.registerCallback(rl -> {
                 sparkline.addDataPoint(rl.getEps());
                 sparkline.print();
+                System.out.println(w);
                 System.out.printf("eps: %.1f\n", rl.getEps());
             });
           });
