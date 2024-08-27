@@ -1,4 +1,5 @@
 .classpath
+.env
 .idea
 *.iml
 .project
