@@ -4,12 +4,20 @@ import com.google.common.util.concurrent.RateLimiter;
 import io.waveshaper.waveforms.Oscillator;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.function.Consumer;
 
 public class WaveformRateLimiter implements Syncable {
   private final Oscillator osc;
   private RateLimiter limiter;
   private int totalAcquired = 0;
   private Instant start = Instant.now();
+
+  // Store the previous rate and eps
+  private double currentRate = 0.0;
+  private double eps = 0.0;
+
+  // Consumer to hold the callback function
+  private Consumer<WaveformRateLimiter> callback;
 
   public static WaveformRateLimiter create(Oscillator osc) {
     return new WaveformRateLimiter(osc);
@@ -29,11 +37,8 @@ public class WaveformRateLimiter implements Syncable {
       // log the previous rate + events per second (eps)
       Instant finished = Instant.now();
       double elapsed = Duration.between(start, finished).toMillis();
-      double eps = totalAcquired / elapsed * 1000;
-      // System.out.printf("%.1f ", eps);
-      double currentRate = limiter.getRate();
-      System.out.printf(
-          "previous rate: %.1f, eps: %.1f, diff: %.1f\n", currentRate, eps, currentRate - eps);
+      this.eps = totalAcquired / elapsed * 1000;
+      this.currentRate = limiter.getRate();
       /*!
        * Update the rate limiter. Note: we initially tried using
        * limiter.setRate(value), but according to the guava Javadocs:
@@ -50,6 +55,11 @@ public class WaveformRateLimiter implements Syncable {
       limiter = RateLimiter.create(value);
       totalAcquired = 0;
       start = Instant.now();
+
+      // Invoke the callback if it has been registered
+      if (callback != null) {
+          callback.accept(this);
+      }
     }
   }
 
@@ -78,6 +88,21 @@ public class WaveformRateLimiter implements Syncable {
     }
     return acquired;
   }
+
+  // Getter for previous rate
+  public double getCurrentRate() {
+    return currentRate;
+  }
+
+  // Getter for events per second (eps)
+  public double getEps() {
+    return eps;
+  }
+
+  public void registerCallback(Consumer<WaveformRateLimiter> callback) {
+      this.callback = callback;
+  }
+
 
   public boolean updating() {
     return osc.running() && osc.hasNext();

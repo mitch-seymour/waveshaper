@@ -1,10 +1,3 @@
-buildscript {
-  if (!project.hasProperty("sonatypeUsername") || !project.hasProperty("sonatypePassword")) {
-    ext.sonatypeUsername = System.getenv("SONATYPE_USERNAME")
-    ext.sonatypePassword = System.getenv("SONATYPE_PASSWORD")
-  }
-}
-
 plugins {
   id "java-library"
 
@@ -18,25 +11,28 @@ plugins {
   id "signing"
 
   // https://plugins.gradle.org/plugin/com.jfrog.artifactory
-  id "com.jfrog.artifactory" version "4.9.0"
+  id "com.jfrog.artifactory" version "5.2.5"
 
-  // https://plugins.gradle.org/plugin/com.github.sherter.google-java-format
-  id "com.github.sherter.google-java-format" version "0.8"
+  // https://plugins.gradle.org/plugin/com.palantir.baseline
+  //id "com.palantir.baseline" version "5.64.0"
+
+  // https://plugins.gradle.org/plugin/com.palantir.java-format
+  //id "com.palantir.java-format" version "2.50.0"
 
   // https://plugins.gradle.org/plugin/net.ltgt.errorprone
-  id 'net.ltgt.errorprone' version "0.6.1"
+  id 'net.ltgt.errorprone' version "4.0.1"
 }
 
 repositories {
   mavenCentral()
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 ext {
   // https://mvnrepository.com/artifact/com.google.errorprone/error_prone_core
-  errorProneCoreVersion = "2.3.2"
+  errorProneCoreVersion = "2.30.0"
 
   // https://mvnrepository.com/artifact/com.google.errorprone/javac
   // required for Java 8 support
@@ -46,21 +42,21 @@ ext {
   junitVersion = "5.3.2"
 
   // https://search.maven.org/artifact/com.google.guava/guava
-  guavaVersion = "27.0.1-jre"
+  guavaVersion = "33.3.0-jre"
 }
 
 dependencies {
   errorprone "com.google.errorprone:error_prone_core:${errorProneCoreVersion}"
   errorproneJavac "com.google.errorprone:javac:${errorProneJavacVersion}"
 
-  testCompile "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-  testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
   implementation "com.google.guava:guava:${guavaVersion}"
 }
 
 tasks.withType(JavaCompile).configureEach { javaCompile ->
-  javaCompile.dependsOn "googleJavaFormat"
+  //javaCompile.dependsOn "googleJavaFormat"
   options.encoding = 'UTF-8'
   options.errorprone {
     disableWarningsInGeneratedCode = true
@@ -72,13 +68,38 @@ test {
   useJUnitPlatform()
 }
 
-mainClassName = 'io.waveshaper.Demo'
-
 run {
   // Enable human friendly logging
   systemProperty "LOCAL", "local"
 }
 
+/** Examples */
+sourceSets {
+    examples {
+        java {
+            srcDir 'src/examples/java'
+        }
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    examplesImplementation.extendsFrom implementation
+}
+
+task compileExamples(type: JavaCompile) {
+    source = sourceSets.examples.java
+    classpath = sourceSets.main.compileClasspath + sourceSets.examples.compileClasspath
+    destinationDir = sourceSets.examples.output.classesDirs.singleFile
+}
+
+task runDemo1(type: JavaExec) {
+    dependsOn compileExamples
+    mainClass = 'io.waveshaper.Demo' // Make sure this matches your example class name
+    classpath = sourceSets.main.runtimeClasspath + sourceSets.examples.runtimeClasspath
+}
+// end examples
 
 task sourcesJar(type: Jar) {
   from sourceSets.main.allJava
@@ -95,7 +116,7 @@ publishing {
     mavenJava(MavenPublication) {
       artifactId = 'waveshaper'
       groupId 'io.waveshaper'
-      version '0.1.2'
+      version '0.1.3'
       from components.java
       artifact sourcesJar
       artifact javadocJar
@@ -128,8 +149,8 @@ publishing {
     maven {
       url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
       credentials {
-          username sonatypeUsername
-          password sonatypePassword
+        username = findProperty("ossrhToken") as String
+        password = findProperty("ossrhTokenPassword") as String
       }
     }
   }
